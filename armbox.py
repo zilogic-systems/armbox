@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 from __future__ import print_function
 
 import re
@@ -45,7 +45,7 @@ html_view_tmpl = """
   <body>
     <div style="width: 100%;">
       <div class="autocenter" style="width: 1000px;">
-        <form action="/armsim" method="post" style="width: 100%">
+        <form action="/cgi-bin/armbox.cgi" method="post" style="width: 100%">
       <table style="width: 100%">
         <tr><td colspan="2" class="title">ARM Simulator</td><tr>
           <td colspan="2" style="text-align: center">
@@ -242,7 +242,7 @@ def run_prog(instruction, state, path):
     with open(os.path.join(path, "prog.s"), "w") as fp:
         template = jinja2.Template(asm_prog_tmpl)
         prog = template.render(inst=instruction, **state)
-        print(prog)
+        # print(prog)
         fp.write(prog)
 
     with open(os.path.join(path, "build.sh"), "w") as fp:
@@ -313,7 +313,7 @@ def get_form_state(form):
 
 def main(form):
     instruction, state = get_form_state(form)
-    print(instruction, state)
+    # print(instruction, state)
 
     path = None
     try:
@@ -323,23 +323,23 @@ def main(form):
         if path:
             shutil.rmtree(path)
 
-    print(error, state)
+    # print(error, state)
 
     template = jinja2.Template(html_view_tmpl)
     html = template.render(prog=instruction, error=error, **state)
     return html
 
 
-@bottle.route("/armsim", method="GET")
+@bottle.route("/", method="GET")
 def get_main():
     return main(bottle.request.GET)
 
 
-@bottle.route("/armsim", method="POST")
+@bottle.route("/", method="POST")
 def post_main():
     return main(bottle.request.POST)
 
 
 if __name__ == "__main__":
     bottle.debug(True)
-    bottle.run()
+    bottle.run(server="cgi")

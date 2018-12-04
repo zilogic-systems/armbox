@@ -15,6 +15,7 @@ deb:
 		-d gcc-arm:i386				\
 		-d "apache | httpd"			\
 		--description 'Poke and learn ARM instructions.' \
+		.
 
 
 clean:
